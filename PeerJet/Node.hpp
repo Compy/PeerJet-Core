@@ -101,9 +101,16 @@ public:
     bool setStatus(UserStatus status);
     UserStatus getStatus();
     
-    bool bootstrap(std::string address, unsigned short port, const unsigned short *pubKey);
+    unsigned int addFriend(std::string address, const unsigned char *message, size_t length);
+    unsigned int addFriendNoRequest(const unsigned char *pubKey);
+    bool removeFriend(unsigned int friendNumber);
+    unsigned int getFriendByPublicKey(const unsigned char *pubKey);
+    bool friendExists(unsigned int friendNumber);
+    size_t friendListSize();
     
-    bool addTcpRelay(std::string address, unsigned short port, const unsigned short *pubKey);
+    bool bootstrap(std::string address, unsigned short port, const unsigned char *pubKey);
+    
+    bool addTcpRelay(std::string address, unsigned short port, const unsigned char *pubKey);
     
     ConnectionType getConnectionStatus();
     
