@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F583041221A26E540040966A /* Node.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F583041021A26E540040966A /* Node.cpp */; };
 		F5C84872219D1348007E0E4B /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5C84871219D1348007E0E4B /* main.cpp */; };
 /* End PBXBuildFile section */
 
@@ -23,8 +24,11 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		F583041021A26E540040966A /* Node.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Node.cpp; sourceTree = "<group>"; };
+		F583041121A26E540040966A /* Node.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Node.hpp; sourceTree = "<group>"; };
 		F5C8486E219D1348007E0E4B /* PeerJet */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = PeerJet; sourceTree = BUILT_PRODUCTS_DIR; };
 		F5C84871219D1348007E0E4B /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		F5C8487B219D173B007E0E4B /* peerjet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = peerjet.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +62,9 @@
 			isa = PBXGroup;
 			children = (
 				F5C84871219D1348007E0E4B /* main.cpp */,
+				F5C8487B219D173B007E0E4B /* peerjet.h */,
+				F583041021A26E540040966A /* Node.cpp */,
+				F583041121A26E540040966A /* Node.hpp */,
 			);
 			path = PeerJet;
 			sourceTree = "<group>";
@@ -119,6 +126,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F5C84872219D1348007E0E4B /* main.cpp in Sources */,
+				F583041221A26E540040966A /* Node.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
