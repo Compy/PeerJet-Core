@@ -9,9 +9,11 @@
 #ifndef Node_hpp
 #define Node_hpp
 
+#include "Config.h"
 #include <cstdint>
 #include <stdio.h>
 #include <string>
+#include <vector>
 
 #define PEERJET_KEY_LENGTH      32
 
@@ -28,7 +30,7 @@ typedef enum {
     PROXY_TYPE_SOCKS5
 } ProxyType;
 
-typedef unsigned char NodeAddress[PEERJET_KEY_LENGTH];
+typedef uint8_t NodeAddress[PEERJET_KEY_LENGTH];
 
 typedef struct {
     /**
@@ -104,6 +106,56 @@ typedef enum {
     FILE_CONTROL_CANCEL
 } FileControlType;
 
+#define FILE_ID_LENGTH 32
+
+struct FileTransfers {
+    uint64_t size;
+    uint64_t transferred;
+    uint8_t status; /* 0 == no transfer, 1 = not accepted, 3 = transferring, 4 = broken, 5 = finished */
+    uint8_t paused; /* 0: not paused, 1 = paused by us, 2 = paused by other, 3 = paused by both. */
+    uint32_t last_packet_number; /* number of the last packet sent. */
+    uint64_t requested; /* total data requested by the request chunk callback */
+    unsigned int slots_allocated; /* number of slots allocated to this transfer. */
+    uint8_t id[FILE_ID_LENGTH];
+};
+
+typedef struct {
+    uint8_t real_pk[PEERJET_KEY_LENGTH];
+    int friendcon_id;
+    
+    uint64_t friendrequest_lastsent; // Time at which the last friend request was sent.
+    uint32_t friendrequest_timeout; // The timeout between successful friendrequest sending attempts.
+    uint8_t status; // 0 if no friend, 1 if added, 2 if friend request sent, 3 if confirmed friend, 4 if online.
+    uint8_t info[MAX_FRIEND_REQUEST_DATA_SIZE]; // the data that is sent during the friend requests we do.
+    uint8_t name[MAX_NAME_LENGTH];
+    uint16_t name_length;
+    uint8_t name_sent; // 0 if we didn't send our name to this friend 1 if we have.
+    uint8_t statusmessage[MAX_STATUSMESSAGE_LENGTH];
+    uint16_t statusmessage_length;
+    uint8_t statusmessage_sent;
+    UserStatusType userstatus;
+    uint8_t userstatus_sent;
+    uint8_t user_istyping;
+    uint8_t user_istyping_sent;
+    uint8_t is_typing;
+    uint16_t info_size; // Length of the info.
+    uint32_t message_id; // a semi-unique id used in read receipts.
+    uint32_t friendrequest_nospam; // The nospam number used in the friend request.
+    uint64_t last_seen_time;
+    uint8_t last_connection_udp_tcp;
+    struct FileTransfers file_sending[MAX_CONCURRENT_FILE_PIPES];
+    unsigned int num_sending_files;
+    struct FileTransfers file_receiving[MAX_CONCURRENT_FILE_PIPES];
+    
+    struct {
+        int (*function)(Node *node, uint32_t friendNumber, const uint8_t *data, uint16_t len, void *object);
+        void *object;
+    } lossy_rtp_packethandlers[PACKET_LOSSY_AV_RESERVED];
+    
+    struct Receipts *receipts_start;
+    struct Receipts *receipts_end;
+} Friend;
+
 // Callback type definitions
 typedef void PJLogCallback(Node* node, LogLevelType level, const std::string& file, uint32_t line, const std::string& func, const std::string& message, void* userData);
 typedef void PJConnectionStatusCallback(Node* node, ConnectionType connectionStatus, void* userData);
@@ -130,25 +182,25 @@ public:
     Node(NodeConfiguration* config);
     NodeAddress* getAddress();
     
-    bool setName(std::string name);
-    std::string getName();
+    bool setName(const std::string& name);
+    const std::string getName();
     
-    bool setStatusMessage(std::string statusMessage);
-    std::string getStatusMessage();
+    bool setStatusMessage(const std::string& statusMessage);
+    const std::string getStatusMessage();
     
     bool setStatus(UserStatusType status);
     UserStatusType getStatus();
     
     uint32_t addFriend(const std::string& address, const std::string& message, size_t length);
-    uint32_t addFriendNoRequest(const std::string& pubKey);
+    uint32_t addFriendNoRequest(const uint8_t* pubKey);
     bool removeFriend(uint32_t friendNumber);
-    uint32_t getFriendByPublicKey(const std::string& pubKey);
+    uint32_t getFriendByPublicKey(const uint8_t* pubKey);
     bool friendExists(uint32_t friendNumber);
     size_t friendListSize();
     
-    bool bootstrap(const std::string& address, uint16_t port, const std::string& pubKey);
+    bool bootstrap(const std::string& address, uint16_t port, const uint8_t* pubKey);
     
-    bool addTcpRelay(const std::string& address, uint16_t port, const std::string& pubKey);
+    bool addTcpRelay(const std::string& address, uint16_t port, const uint8_t* pubKey);
     
     void setNoSpam(uint32_t nospam);
     uint32_t getNoSpam();
@@ -156,7 +208,7 @@ public:
     bool getFriendsPublicKey(uint32_t friendNumber, uint8_t *pubKey);
     uint64_t getFriendLastOnline(uint32_t friendNumber);
     
-    std::string getFriendName(uint32_t friendNumber);
+    const std::string getFriendName(uint32_t friendNumber);
     
     ConnectionType getConnectionStatus();
     
@@ -184,6 +236,7 @@ private:
     NodeConfiguration* config;
     std::string name;
     std::string statusMessage;
+    std::vector<Friend*> friends;
     
     uint32_t nospam;
     UserStatusType status;

@@ -17,24 +17,24 @@ NodeAddress* Node::getAddress()
     return this->address;
 }
 
-bool Node::setName(std::string name)
+bool Node::setName(const std::string& name)
 {
     this->name = name;
     return true;
 }
 
-std::string Node::getName()
+const std::string Node::getName()
 {
     return this->name;
 }
 
-bool Node::setStatusMessage(std::string statusMessage)
+bool Node::setStatusMessage(const std::string& statusMessage)
 {
     this->statusMessage = statusMessage;
     return true;
 }
 
-std::string Node::getStatusMessage()
+const std::string Node::getStatusMessage()
 {
     return this->statusMessage;
 }
@@ -55,7 +55,7 @@ uint32_t Node::addFriend(const std::string &address, const std::string &message,
     return 0;
 }
 
-uint32_t Node::addFriendNoRequest(const std::string &pubKey)
+uint32_t Node::addFriendNoRequest(const uint8_t *pubKey)
 {
     return 0;
 }
@@ -65,9 +65,19 @@ bool Node::removeFriend(uint32_t friendNumber)
     return true;
 }
 
-uint32_t Node::getFriendByPublicKey(const std::string &pubKey)
+uint32_t Node::getFriendByPublicKey(const uint8_t *pubKey)
 {
     return true;
+}
+
+bool Node::friendExists(uint32_t friendNumber)
+{
+    return true;
+}
+
+size_t Node::friendListSize()
+{
+    return 0;
 }
 
 
