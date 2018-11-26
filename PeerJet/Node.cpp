@@ -6,6 +6,7 @@
 //  Copyright © 2018 peerjet. All rights reserved.
 //
 
+#include "Crypto.hpp"
 #include "Node.hpp"
 
 Node::Node(NodeConfiguration* config) {
@@ -55,29 +56,44 @@ uint32_t Node::addFriend(const std::string &address, const std::string &message,
     return 0;
 }
 
-uint32_t Node::addFriendNoRequest(const uint8_t *pubKey)
+int32_t Node::addFriendNoRequest(const uint8_t *pubKey)
 {
-    return 0;
+    if (getFriendByPublicKey(pubKey) != -1) {
+        return -4;
+    }
+    if (!Crypto::isPublicKeyValid(pubKey)) {
+        return -5;
+    }
+    if (Crypto::comparePublicKeys(pubKey, getAddress()))
+}
+
+int Node::getFriendByPublicKey(const uint8_t *pubKey)
+{
+    int count = 0;
+    for (std::vector<Friend*>::iterator it = this->friends.begin(); it != this->friends.end(); ++it) {
+        if (Crypto::comparePublicKeys((*it)->real_pk, pubKey)) {
+            return count;
+        }
+        count++;
+    }
+    return -1;
 }
 
 bool Node::removeFriend(uint32_t friendNumber)
 {
-    return true;
-}
-
-uint32_t Node::getFriendByPublicKey(const uint8_t *pubKey)
-{
+    if (friendNumber < 0 || friendNumber >= this->friends.size()) return false;
+    this->friends.erase(this->friends.begin() + friendNumber);
     return true;
 }
 
 bool Node::friendExists(uint32_t friendNumber)
 {
-    return true;
+    return friendNumber >= 0 && friendNumber < this->friends.size();
 }
 
 size_t Node::friendListSize()
 {
-    return 0;
+    return this->friends.size();
 }
 
 

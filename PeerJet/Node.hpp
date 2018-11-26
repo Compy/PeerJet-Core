@@ -194,7 +194,7 @@ public:
     uint32_t addFriend(const std::string& address, const std::string& message, size_t length);
     uint32_t addFriendNoRequest(const uint8_t* pubKey);
     bool removeFriend(uint32_t friendNumber);
-    uint32_t getFriendByPublicKey(const uint8_t* pubKey);
+    int getFriendByPublicKey(const uint8_t* pubKey);
     bool friendExists(uint32_t friendNumber);
     size_t friendListSize();
     
